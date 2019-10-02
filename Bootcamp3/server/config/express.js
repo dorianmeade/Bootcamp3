@@ -23,36 +23,36 @@ module.exports.init = function() {
   app.use(bodyParser.json());
 
   /* serve static files - see http://expressjs.com/en/starter/static-files.html */
-  app.use('/', express.static(__dirname + '/../../client'));
+app.use('/', express.static(__dirname + '/../../client'));
+
+//Serve static files found in the public folder when user makes a request to the path /
+app.use('/', express.static(__dirname + '/../../public'));
+//app.use('/', express.static('public'));
 
 /* The next three middleware are important to the API that we are bulding */
 
-  /* Request Handler for route /api/lisings
-     Update the code to meet the required format - app.use('/api/listings', appropriateMiddlewWare)
-     use the listings router middleware for requests to the api 
-     check the variables list above
-  */
-  app.use('/api/listings');
-
+ 
 
    /* Request Handler for coordinates
       This is a server wrapper around Open Cage Data Geocoding API to get latitude + longitude coordinates from address */
   app.post('/api/coordinates', getCoordinates, function(req, res) {
     res.send(req.results);
   });
-
+ 
+  /* Request Handler for route /api/lisings
+     Update the code to meet the required format - app.use('/api/listings', appropriateMiddlewWare)
+     use the listings router middleware for requests to the api 
+     check the variables list above
+  */
+  //Use the listings router for requests foing to the /api/listings path
+  app.use('/api/listings', listingsRouter);
 
   /* Request Handeler for all other routes
      Sends a response (res) to go to the homepage for all routes not specified */ 
   app.all('/*', function(req, res) {
-   
-   /*Add YOUR CODE HERE 
-      see https://expressjs.com/en/api.html#res.sendFile
-      see https://nodejs.org/api/path.html
-      The path.resolve() method returns a string and resolves a sequence of paths or path segments into an absolute path.
-      If no path segments are passed, path.resolve() will return the absolute path of the current working directory.
-   */
-   //res.sendFile(path.resolve(...));
+    //Direct users to the client side index.html file for requests to any other path
+   res.sendFile(path.resolve('client/index.html'));
+
   });
   
   return app;
